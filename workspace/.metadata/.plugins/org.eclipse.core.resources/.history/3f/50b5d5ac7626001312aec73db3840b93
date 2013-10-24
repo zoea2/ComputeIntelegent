@@ -1,0 +1,27 @@
+package differentialEvolution;
+
+public class Genotype implements Cloneable{
+	static int NVARS;
+	//final int MAXGENS = 10000;
+	final static double PXOVER = 0.8;
+	//final static double PMUTATION = 0.1;
+	final static double SCALE = 0.6;
+	double[] gene;
+	double fitness;
+	double[] upper;
+	double[] lower;
+	//double rfitness;
+	//double cfitness;
+	int popsize;
+	Genotype(int dim){
+		NVARS = dim;
+		//popsize = p;
+		gene = new double [NVARS];
+		upper = new double [NVARS];
+		lower = new double [NVARS];
+	}
+	public Object clone() throws CloneNotSupportedException{
+		return super.clone();
+		
+	}
+}
