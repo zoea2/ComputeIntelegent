@@ -52,14 +52,6 @@ public class DE {
 		output.close();
 		*/
 	}
-	public static void evaluate(Genotype[] population){
-		for(int i = 1;i <= POPSIZE;i++){
-			double x1 = population[i].gene[0];
-			double x2 = population[i].gene[1];
-			population[i].fitness = 21.5 + x1 * Math.sin(4*Math.PI*x1)+x2*Math.sin(20*Math.PI*x2);
-			//System.out.printf("popsize %d fitness %f \n",i,population[i].fitness);
-		}
-	}
 	public static double funcU(double x,int a,int k,int m){
 		if(x > a)
 			return (double)(k * Math.pow(x-a, m));
@@ -113,231 +105,205 @@ public class DE {
 		
 	}
 	public static void evaluate(Genotype[] population,int size,int number){
+		for(int i = 1;i <= size;i++){
+			evaluate(population[i],number);
+		}
+	}
+	public static void evaluate(Genotype population,int number){
 		switch(number){
 			case 0:
-				for(int i = 1;i <= size;i++){
-					double x1 = population[i].gene[0];
-					double x2 = population[i].gene[1];
-					population[i].fitness = 21.5 + x1 * Math.sin(4*Math.PI*x1)+x2*Math.sin(20*Math.PI*x2);
+					double x1 = population.gene[0];
+					double x2 = population.gene[1];
+					population.fitness = 21.5 + x1 * Math.sin(4*Math.PI*x1)+x2*Math.sin(20*Math.PI*x2);
 					//System.out.printf("popsize %d fitness %f \n",i,population[i].fitness);
-				}
+				
 				break;
 			case 1:
-				for(int i = 1;i <= size;i++){
-					population[i].fitness = 0;
+					population.fitness = 0;
 					for(int j = 0;j < Genotype.NVARS;j++){
-						population[i].fitness += Math.pow(population[i].gene[j], 2);
+						population.fitness += Math.pow(population.gene[j], 2);
 					}
 					feNumber++;
-				}
 				break;
 			case 2:
-				for(int i = 1;i <= size;i++){
-					population[i].fitness = 0;
+					population.fitness = 0;
 					double temp = 1;
 					for(int j = 0;j < Genotype.NVARS;j++){
-						double tempabs = Math.abs(population[i].gene[j]);
-						population[i].fitness += tempabs;
+						double tempabs = Math.abs(population.gene[j]);
+						population.fitness += tempabs;
 						temp *= tempabs;
 					}
-					population[i].fitness += temp;
+					population.fitness += temp;
 					feNumber++;
-				}
 				break;
 			case 3:
-				for(int i = 1; i <= size;i++){
-					population[i].fitness = 0;
+					population.fitness = 0;
 					for(int j = 0;j < Genotype.NVARS - 1;j++){
-						double x1 = population[i].gene[j];
-						double x2 = population[i].gene[j+1];
-						population[i].fitness += 100 * Math.pow(x2 - Math.pow(x1,2),2) + Math.pow(x1-1,2);
+						x1 = population.gene[j];
+						x2 = population.gene[j+1];
+						population.fitness += 100 * Math.pow(x2 - Math.pow(x1,2),2) + Math.pow(x1-1,2);
 					}
 					feNumber++;
-				}
 				break;
 			case 4:
-				for(int i = 1;i <= size;i++){
-					population[i].fitness = Math.random();
-					while(population[i].fitness == 1)
-						population[i].fitness = Math.random();
+					population.fitness = Math.random();
+					while(population.fitness == 1)
+						population.fitness = Math.random();
 					for(int j = 0;j < Genotype.NVARS;j++){
-						population[i].fitness += j * Math.pow(population[i].gene[j], 4);
+						population.fitness += j * Math.pow(population.gene[j], 4);
 					}
 					feNumber++;
-				}
+				
 				break;
 			case 5:
-				for(int i = 1;i <= size;i++){
-					population[i].fitness = 418.9829 * Genotype.NVARS;
+					population.fitness = 418.9829 * Genotype.NVARS;
 					for(int j = 0;j < Genotype.NVARS;j++){
-						double x = population[i].gene[j];
-						population[i].fitness -= x * Math.sin(Math.sqrt(Math.abs(x)));
+						double x = population.gene[j];
+						population.fitness -= x * Math.sin(Math.sqrt(Math.abs(x)));
 					}
 					feNumber++;
-				}
 				break;
 			case 6:
-				for(int i = 1;i <= size;i++){
-					population[i].fitness = 0;
+					population.fitness = 0;
 					for(int j = 0;j < Genotype.NVARS;j++){
-						double x = population[i].gene[j];
-						population[i].fitness += Math.pow(x,2) - 10 * Math.cos(2 * Math.PI * x) + 10;
+						double x = population.gene[j];
+						population.fitness += Math.pow(x,2) - 10 * Math.cos(2 * Math.PI * x) + 10;
 					}
 					feNumber++;
-				}
 				break;
 			case 7:
-				for(int i = 1;i <= size;i++){
-					population[i].fitness = 20 + Math.E;
+					population.fitness = 20 + Math.E;
 					double temp1 = 0;
 					double temp2 = 0;
 					for(int j = 0;j < Genotype.NVARS;j++){
-						temp1 += Math.pow(population[i].gene[j],2);
-						temp2 += Math.cos(2 * Math.PI * population[i].gene[j]);
+						temp1 += Math.pow(population.gene[j],2);
+						temp2 += Math.cos(2 * Math.PI * population.gene[j]);
 					}
-					population[i].fitness += -20 * Math.exp(-0.2 * Math.sqrt(temp1 / Genotype.NVARS))
+					population.fitness += -20 * Math.exp(-0.2 * Math.sqrt(temp1 / Genotype.NVARS))
 							 				- Math.exp(temp2 / Genotype.NVARS);
 					feNumber++;
-				}
 				break;
 			case 8:
-				for(int i = 1;i <= size;i++){
-					population[i].fitness = 0;
-					double temp = 1;
+					population.fitness = 0;
+					temp = 1;
 					for(int j = 0;j < Genotype.NVARS;j++){
-						population[i].fitness += Math.pow(population[i].gene[j], 2);
-						temp *= Math.cos(population[i].gene[j] / Math.sqrt(j+1));
+						population.fitness += Math.pow(population.gene[j], 2);
+						temp *= Math.cos(population.gene[j] / Math.sqrt(j+1));
 					}
-					population[i].fitness = population[i].fitness / 4000 - temp + 1;
+					population.fitness = population.fitness / 4000 - temp + 1;
 					feNumber++;
-				}
 				break;
 			case 9:
-				for(int i = 1;i <= size;i++){
-					double y1 = 1 + (population[i].gene[0] + 1) / 4;
-					double yd = 1 + (population[i].gene[Genotype.NVARS-1] + 1) / 4;
-					double temp1 = 10 * Math.pow(Math.sin(Math.PI * y1), 2)
+					double y1 = 1 + (population.gene[0] + 1) / 4;
+					double yd = 1 + (population.gene[Genotype.NVARS-1] + 1) / 4;
+					temp1 = 10 * Math.pow(Math.sin(Math.PI * y1), 2)
 									+ Math.pow(yd-1,2);
-					double temp2 = 0;					
+					temp2 = 0;					
 					for(int j = 0;j < Genotype.NVARS;j++){
 						if(j < Genotype.NVARS-1){
-							double yi = 1 + (population[i].gene[j] + 1) / 4;
-							double yii = 1 + (population[i].gene[j+1] + 1) / 4;
+							double yi = 1 + (population.gene[j] + 1) / 4;
+							double yii = 1 + (population.gene[j+1] + 1) / 4;
 							temp1 += Math.pow(yi-1,2) * (1 + 10 * Math.pow(Math.sin(Math.PI * yii), 2));
 						}
-						temp2 += funcU(population[i].gene[j],10,100,4);
+						temp2 += funcU(population.gene[j],10,100,4);
 					}
-					population[i].fitness = temp1 / Genotype.NVARS * Math.PI + temp2; 
+					population.fitness = temp1 / Genotype.NVARS * Math.PI + temp2; 
 					feNumber++;
-				}
 				break;
 			case 10:
-				for(int i = 1;i <= size;i++){
-					population[i].fitness = Math.pow(Math.sin(3 * Math.PI * population[i].gene[0]), 2);
-					double xd = population[i].gene[Genotype.NVARS-1];
-					population[i].fitness += Math.pow(xd-1,2) * (1 + Math.pow(Math.sin(2 * Math.PI * xd), 2));
-					double temp = 0;
+					population.fitness = Math.pow(Math.sin(3 * Math.PI * population.gene[0]), 2);
+					double xd = population.gene[Genotype.NVARS-1];
+					population.fitness += Math.pow(xd-1,2) * (1 + Math.pow(Math.sin(2 * Math.PI * xd), 2));
+					temp = 0;
 					for(int j = 0;j < Genotype.NVARS;j++){
 						if(j < Genotype.NVARS - 1){
-							population[i].fitness += Math.pow(population[i].gene[j] - 1, 2) 
-									* (1 + Math.pow(Math.sin(3 * Math.PI * population[i].gene[j+1]), 2));
+							population.fitness += Math.pow(population.gene[j] - 1, 2) 
+									* (1 + Math.pow(Math.sin(3 * Math.PI * population.gene[j+1]), 2));
 						}
-						temp += funcU(population[i].gene[j],5,100,4);
+						temp += funcU(population.gene[j],5,100,4);
 					}
-					population[i].fitness /= 10;
-					population[i].fitness += temp;
+					population.fitness /= 10;
+					population.fitness += temp;
 					feNumber++;
-				}
 				break;
 			case 11:
-				for(int i = 1;i <= size;i++){
-					population[i].fitness = 418.9829 * Genotype.NVARS;
+					population.fitness = 418.9829 * Genotype.NVARS;
 					for(int j = 0;j < Genotype.NVARS;j++){
 						double y = 0;
 						for(int k = 0;k < Genotype.NVARS;k++){
-							y += MResult[j][k] * (population[i].gene[k] - 420.96);
+							y += MResult[j][k] * (population.gene[k] - 420.96);
 						}
 						y += 420.96;
 						if (Math.abs(y) <= 500)
 							y = y * Math.sin(Math.sqrt(Math.abs(y)));
 						else
 							y = 0;
-						population[i].fitness -= y;
+						population.fitness -= y;
 					}
 					feNumber++;
-				}
+				
 				break;
 			case 12:
-				//CreateMatrix(MResult);
-				for(int i = 1;i <= size;i++){
 					//CreateMatrix(MResult);
-					population[i].fitness = 0;
+					population.fitness = 0;
 					for(int j = 0;j < Genotype.NVARS;j++){
 						double y = 0;
 						for(int k = 0;k < Genotype.NVARS;k++){
-							y += MResult[j][k] * population[i].gene[k];
+							y += MResult[j][k] * population.gene[k];
 						}
-						population[i].fitness += Math.pow(y,2) - 10 * Math.cos(2 * Math.PI * y) + 10;
+						population.fitness += Math.pow(y,2) - 10 * Math.cos(2 * Math.PI * y) + 10;
 					}
 					feNumber++;
-				}
+				
 				break;
 			case 13:
-				for(int i = 1;i <= size;i++){
 					//CreateMatrix(MResult);
-					double temp1 = 0;
-					double temp2 = 0;
+					temp1 = 0;
+					temp2 = 0;
 					for(int j = 0;j < Genotype.NVARS;j++){
 						double y = 0;
 						for(int k = 0;k < Genotype.NVARS;k++){
-							y += MResult[j][k] * population[i].gene[k];
+							y += MResult[j][k] * population.gene[k];
 						}
 						temp1 += Math.pow(y, 2);
 						temp2 += Math.cos(2 * Math.PI * y);
 					}
-					population[i].fitness = -20 * Math.exp(-0.2 * Math.sqrt(temp1 / Genotype.NVARS))
+					population.fitness = -20 * Math.exp(-0.2 * Math.sqrt(temp1 / Genotype.NVARS))
 							- Math.exp(temp2 / Genotype.NVARS) + 20 + Math.E;
 					feNumber++;
-				}
 				break;
 			case 14:
-				for(int i = 1;i <= size;i++){
 					//CreateMatrix(MResult);
-					population[i].fitness = 0;
-					double temp = 1;
+					population.fitness = 0;
+					temp = 1;
 					for(int j = 0;j < Genotype.NVARS;j++){
 						double y = 0;
 						for(int k = 0;k < Genotype.NVARS;k++){
-							y += MResult[j][k] * population[i].gene[k];
+							y += MResult[j][k] * population.gene[k];
 						}
-						population[i].fitness += Math.pow(y,2);
+						population.fitness += Math.pow(y,2);
 						temp *= Math.cos(y / Math.sqrt(j+1));
 					}
-					population[i].fitness /= 4000;
-					population[i].fitness = population[i].fitness - temp + 1;
+					population.fitness /= 4000;
+					population.fitness = population.fitness - temp + 1;
 					feNumber++;
-				}
 				break;
 			case 15:
-				for(int i = 1;i <= size;i++){
-					population[i].fitness = 390;
+					population.fitness = 390;
 					for(int j = 0;j < Genotype.NVARS-1;j++){
-						double z1 = population[i].gene[j] - Rosenbrock[j] + 1;
-						double z2 = population[i].gene[j+1] - Rosenbrock[j+1] +1;
-						population[i].fitness += 100 * Math.pow(Math.pow(z1,2) - z2, 2) + Math.pow(z1-1,2);
+						double z1 = population.gene[j] - Rosenbrock[j] + 1;
+						double z2 = population.gene[j+1] - Rosenbrock[j+1] +1;
+						population.fitness += 100 * Math.pow(Math.pow(z1,2) - z2, 2) + Math.pow(z1-1,2);
 					}
 					feNumber++;
-				}
 				break;
 			case 16:
-				for(int i = 1;i <= size;i++){
-					population[i].fitness = -330;
+					population.fitness = -330;
 					for(int j = 0;j < Genotype.NVARS;j++){
-						double z = population[i].gene[j] - Rastrigin[j];
-						population[i].fitness += Math.pow(z,2) - 10 * Math.cos(2 * Math.PI * z) + 10;
+						double z = population.gene[j] - Rastrigin[j];
+						population.fitness += Math.pow(z,2) - 10 * Math.cos(2 * Math.PI * z) + 10;
 					}
 					feNumber++;
-				}
 				break;
 		}
 		
@@ -591,12 +557,25 @@ public class DE {
 					ctemp.gene[i-1] = population[ran3].gene[i-1];
 					
 			}
-			for(int j = 0;j < Genotype.NVARS;j++){
-				MidPop[p].gene[j] = ctemp.gene[j] + Genotype.SCALE * 
+			evaluate(ctemp,f);
+			if(best.fitness > ctemp.fitness)
+			{
+				for(int j = 0;j < Genotype.NVARS;j++){
+					MidPop[p].gene[j] = ctemp.gene[j] + Genotype.SCALE * 
 										(temp1.gene[j] - temp2.gene[j]);
-				if(MidPop[p].gene[j] < MidPop[p].lower[j] || MidPop[p].gene[j] > MidPop[p].upper[j])
-					MidPop[p].gene[j] = Math.random() * (MidPop[p].upper[j] - MidPop[p].lower[j])
+					if(MidPop[p].gene[j] < MidPop[p].lower[j] || MidPop[p].gene[j] > MidPop[p].upper[j])
+						MidPop[p].gene[j] = Math.random() * (MidPop[p].upper[j] - MidPop[p].lower[j])
 										+MidPop[p].lower[j];
+				}
+			}
+			else{
+				for(int j = 0;j < Genotype.NVARS;j++){
+					MidPop[p].gene[j] = best.gene[j] + Genotype.SCALE * 
+										(temp1.gene[j] - temp2.gene[j]);
+					if(MidPop[p].gene[j] < MidPop[p].lower[j] || MidPop[p].gene[j] > MidPop[p].upper[j])
+						MidPop[p].gene[j] = Math.random() * (MidPop[p].upper[j] - MidPop[p].lower[j])
+										+MidPop[p].lower[j];
+				}
 			}
 		}
 	}
@@ -676,7 +655,9 @@ public class DE {
 					ctemp.gene[i-1] = population[p].gene[i-1];
 				
 			}
-			MidPop[p].gene = ctemp.gene.clone();			
+			evaluate(ctemp,f);
+			if(MidPop[p].fitness > ctemp.fitness)
+				MidPop[p].gene = ctemp.gene.clone();			
 		}		
 	}
 	public static void cross(Genotype[] population,Genotype[] MidPop){
@@ -753,8 +734,8 @@ public class DE {
 				orthMutate_best_1(population,MidPop);
 				//else
 				//mutate(population,MidPop);
-				//orthCross(population,MidPop);
-				cross(population,MidPop);
+				orthCross(population,MidPop);
+				//cross(population,MidPop);
 				evaluate(population,POPSIZE,f);				
 				evaluate(MidPop,POPSIZE,f);
 				select(population,MidPop);
