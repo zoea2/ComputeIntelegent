@@ -1,3 +1,4 @@
-/workspace/conputation intelligence0/bin/
+bin/
 *.class
-*.gitignore
+.gitignore
+*.[oa]
