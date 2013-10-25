@@ -4,6 +4,7 @@ public class Main {
 		String a = "dsfsd";
 		a += 26;
 		System.out.println("Fuck!!");
+		sdfsdfsdfsdfsd
 		System.out.print(a);
 		}
 	public static void MUL(double[][] a,double[][] b){
