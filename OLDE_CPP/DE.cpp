@@ -29,10 +29,6 @@ double ranval(){
 	return rand() * 1.0 / RAND_MAX; 
 }
 void init(){
-	oArray = new int *[row];
-	for(int i = 0;i < row ;i++){
-		oArray[i] = new int[col];
-	}
 	double lbound = -100;
 	double ubound = 100;
 	//string filename = "/home/ryan/testdata/bound";
@@ -154,9 +150,13 @@ void cross(){
 	}
 }
 void creatOA(){
+	oArray = new int *[row+1];
+	for(int i = 0;i <= row ;i++){
+		oArray[i] = new int[col+1];
+	}
 	int u = (int)(log(row) / log (2));
 	for(int i = 1;i <= row;i++){
-		for(int k - 1;k <= u;k++){
+		for(int k = 1;k <= u;k++){
 			int j = (int)pow(2,k-1);
 			oArray[i][j] = (int)(floor((i-1) / pow(2,u-k))) % 2;
 		}
@@ -178,7 +178,14 @@ void creatOA(){
 }
 int main(){
 	srand(time(0));
+	creatOA();
 	cout <<Genotype::NVARS<<endl;
+	double globalbest[29];
+	for(int i = 1;i <= 28;i++){
+		globalbest[i] = -1400 + (i-1) * 100;
+		if(i == 15)
+			globalbest[i] += 100;
+	}
 	double* x;
 	for(f = 1;f <= 28;f++){
 		for(int t = 0;t < 51;t++){
@@ -190,40 +197,67 @@ int main(){
 				}
 			}*/
 		//	system("pause");
+			char filename[100];
+			sprintf(filename,"/home/ryan/testdata/outputc%dthe%dtimes.txt",f,t);
+			ofstream output(filename);
+			bool isEnd = false;
+			feNumber = 0;
 			double *di = new double[2];
 			for(int i = 1;i <= POPSIZE;i++){
-				//for(int j = 0;j < Genotype::NVARS;j++)
+				//for(int j = 0;ij < Genotype::NVARS;j++)
 				//	cout<<population[i].gene[j]<<endl;
 				test_func(population[i].gene,di,Genotype::NVARS,1,f);
 				population[i].fitness = di[0];
+				feNumber++;
 				//cout<<population[i].fitness<<endl;
 			}		
 			keepTheBest();
-			feNumber = 0;
 			while(feNumber < funcEvaluate){
-				cout<<feNumber<<endl;
+				if(isEnd)
+					break;
+				//cout<<feNumber<<endl;
 				mutate_rand_1();
 				//for(int j = 0;j < Genotype::NVARS;j++)
 				//	cout<<"MID "<<MidPop[2].gene[j]<<endl;
 				cross();
-				for(int i = 1;i < POPSIZE;i++){
+				for(int i = 1;i <= POPSIZE;i++){
 					test_func(population[i].gene,di,Genotype::NVARS,1,f);
 					population[i].fitness = di[0];
 					test_func(MidPop[i].gene,di,Genotype::NVARS,1,f);
 					MidPop[i].fitness = di[0];
 					feNumber+=2;
+					if(feNumber == 0.01 * funcEvaluate || feNumber == 0.1 * funcEvaluate 
+							|| feNumber == 0.2 * funcEvaluate || feNumber == 0.3 * funcEvaluate
+							|| feNumber == 0.4 * funcEvaluate || feNumber == 0.5 * funcEvaluate
+							|| feNumber == 0.6 * funcEvaluate || feNumber == 0.7 * funcEvaluate
+							|| feNumber == 0.8 * funcEvaluate || feNumber == 0.9 * funcEvaluate
+							|| feNumber == funcEvaluate){
+
+						output<<"FES = "<<feNumber<<endl;
+						output<<"best :"<<bestA.fitness<<"  error value :"
+							<< bestA.fitness - globalbest[f]<<endl;
+						if(feNumber == funcEvaluate || bestA.fitness - globalbest[f] < 
+								0.00000001){
+							isEnd = true;
+							break;
+						}
+
+					}
+
 				}			
 				select();
 				keepTheBest();
+				if(bestA.fitness - globalbest[f] < 0.00000001)
+					break;
 			}
-		
-			char filename[100];
-			sprintf(filename,"/home/ryan/testdata/outputc%dthe%dtimes.txt",f,t);
-			ofstream output(filename);
+			cout<<"function "<<f<<" times "<<t<<" done!"<<endl;
+			output<<"The total FES is "<<feNumber<<endl;
+			output<<"error value is "<<bestA.fitness - globalbest[f]<<endl;
 			output<<"best: "<<bestA.fitness<<endl;
 			for(int j = 0;j < Genotype::NVARS;j++)
 				output<<bestA.gene[j]<<endl;
 			output.close();
 		}
+		cout<<"function "<<f<<" done!"<<endl;
 	}
 }
