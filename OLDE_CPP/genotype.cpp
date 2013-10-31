@@ -1,5 +1,6 @@
 #include <cstring>
 #include <iostream>
+#include "test_func.cpp"
 using namespace std;
 class Genotype{
 public:
@@ -15,7 +16,7 @@ public:
 		memset(gene,0,sizeof(gene));
 		memset(upper,0,sizeof(upper));
 		memset(lower,0,sizeof(lower));
-		fitness = 0;
+		fitness = INF;
 	}
 	Genotype(Genotype &genotype){
 		memcpy((&this->gene),(&genotype.gene),sizeof(genotype.gene));	

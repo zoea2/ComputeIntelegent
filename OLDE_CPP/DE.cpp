@@ -3,26 +3,204 @@
 #include <cstring>
 #include <string>
 #include <cmath>
+#include <cstdlib>
+#include <ctype.h>
+#include <cstdio>
+#include <fstream>
+using namespace std;
 const int POPSIZE = 50;
 const int funcEvaluate = 300000;
+const int row = (int)(pow(2.0,ceil(log(Genotype::NVARS) / log(2))));
+const int col = row - 1;
+int **oArray;
+double MTurn[Genotype::NVARS+1][Genotype::NVARS+1];
+double MResult[Genotype::NVARS+1][Genotype::NVARS+1];
+double Rosenbrock[Genotype::NVARS+1];
+double Rastrigin[Genotype::NVARS+1];
+
 int feNumber;
 int f;
 Genotype best;
 Genotype bestA;
-int oArray[][];
-int row;
-double MTurn[Genotype.NVARS+1][Genotype.NVARS];
-double MResult[Genotype.NVARS+1][Genotype.NVARS+1];
-double Rosenbrock[Genotype.NVARS+1];
-double Rastrigin[Genotype.NVARS+1];
-void init(){
-	double lbound;
-	double ubound;
-	string filename = "/home/ryan/testdata/bound";
-	filename.append(1,'0'+f);
-	filename.append(".txt");
+Genotype population[POPSIZE+1];
+Genotype MidPop[POPSIZE+1];
+
+double ranval(){
+	return rand() * 1.0 / RAND_MAX; 
 }
-
-
+void init(){
+	oArray = new int *[row];
+	for(int i = 0;i < row ;i++){
+		oArray[i] = new int[col];
+	}
+	double lbound = -100;
+	double ubound = 100;
+	//string filename = "/home/ryan/testdata/bound";
+	char temp[100];
+//	cout<<"ff "<<f<<endl;
+//	sprintf(temp,"/home/ryan/testdata/bound%d.txt",f);
+//	cout<<temp<<endl;
+//	ifstream input;
+//	input.open(temp);
+//	input>>lbound>>ubound;
+//	input.close();
+	for(int i = 0;i < Genotype::NVARS;i++){
+		for(int j = 1;j <= POPSIZE;j++){
+			population[j].fitness = 0;
+			population[j].lower[i] = lbound;
+			population[j].upper[i] = ubound;
+			MidPop[j].lower[i] = lbound;
+			MidPop[j].upper[i] = ubound;
+			population[j].gene[i] = ranval() * (population[j].upper[i] - population[j].lower[i])
+				+ population[j].lower[i];
+		}
+	}
+}
+/*
+double funcU(double x,int a,int k,int m){
+	if(x > a)
+		return (double)(k * pow(x-a,m));
+	else if(x <= a && x >= -a)
+		return 0;
+	else
+		return (double)(k * pow(-x-a,m));
+}
+void setME(double ME[][Genotype::NVARS+1]){
+	for(int i = 0;i < Genotype::NVARS;i++){
+		for(int j = 0;j < Genotype::NVARS; j++){
+			if (i == j)
+				ME[i][j] = 1;
+			else
+				ME[i][j] = 0;
+		}
+	}
+}
+void MulMatrix(){
+	double temp[Genotype::NVARS][Genotype::NVARS];
+	for(int i = 0;i < Genotype::NVARS;i++){
+		for(int j = 0;j < Genotype::NVARS;j++){
+			temp[i][j] = 0;
+			for(int k = 0;k < Genotype::NVARS;k++)
+				temp[i][j] += MResult[i][k] * MTurn[k][j];
+		}
+	}
+	memcpy(&MResult,&temp,sizeof(temp));
+}
+void MRot(int i,int j){
+	setME(MTurn);
+	double alpha = (ranval() - 0.5) * PI * 0.5; 
+	MTurn[i][i] = cos(alpha);
+	MTurn[j][j] = cos(alpha);
+	MTurn[i][j] = sin(alpha);
+	MTurn[j][i] = -sin(alpha);
+}
+*/
+void select(){
+	for(int i = 1;i <= POPSIZE;i++){
+		if(MidPop[i].fitness < population[i].fitness){
+			population[i] = Genotype(MidPop[i]);
+		}
+	}
+}
+bool keepTheBest(){
+	double bestf;
+	int index;
+	bestf = population[1].fitness;
+	index = 1;
+	for(int i = 1;i <= POPSIZE;i++){
+		if(bestf > population[i].fitness){
+			bestf = population[i].fitness;
+			index = i;
+		}
+	}
+	best = Genotype(population[index]);
+	if(bestA.fitness > best.fitness){
+		bestA = Genotype(best);
+		return true;
+	}
+	else
+		return false;
+}
+void mutate_rand_1(){
+	for(int i = 1;i <= POPSIZE;i++){
+		int ran1 = (int)(POPSIZE * ranval() + 1);
+		while(ran1 == i)
+			ran1 = (int)(POPSIZE * ranval() + 1);
+		Genotype temp1(population[ran1]);
+		int ran2 = (int)(POPSIZE * ranval() + 1);
+		while(ran2 == ran1 || ran2 == i)
+			ran2 = (int)(POPSIZE * ranval() + 1);
+		Genotype temp2(population[ran2]);
+		int ran3 = (int)(POPSIZE * ranval() + 1);
+		while(ran3 == ran1 || ran3 == ran2 || ran3 == i)
+			ran3 = (int)(POPSIZE * ranval() + 1);
+		for(int j = 0;j < Genotype::NVARS;j++){
+			MidPop[i].gene[j] = population[ran3].gene[j] + Genotype::SCALE * 
+				(temp1.gene[j] - temp2.gene[j]);
+			if(MidPop[i].gene[j] < MidPop[i].lower[j] || MidPop[i].gene[j] > MidPop[i].upper[j])
+				MidPop[i].gene[j] = ranval() * (MidPop[i].upper[j] - MidPop[i].lower[j])
+					+ MidPop[i].lower[j];
+		}
+	}
+}
+void cross(){
+	for(int i = 1;i <= POPSIZE;i++){
+		int jrand = (int)((ranval() * Genotype::NVARS));
+		for(int j = 0;j < Genotype::NVARS;j++){
+			if(ranval() > Genotype::PXOVER && j != jrand){
+				MidPop[i].gene[j] = population[i].gene[j];
+			}
+		}
+	}
+}
 int main(){
+	srand(time(0));
+	cout <<Genotype::NVARS<<endl;
+	double* x;
+	for(f = 1;f <= 28;f++){
+		for(int t = 0;t < 51;t++){
+			bestA.fitness = INF;
+			init();
+		/*	for(int i = 1;i <= POPSIZE;i++){
+				for(int j = 0;j < Genotype::NVARS;j++){
+					cout<<population[i].gene[j]<<endl;
+				}
+			}*/
+		//	system("pause");
+			double *di = new double[2];
+			for(int i = 1;i <= POPSIZE;i++){
+				//for(int j = 0;j < Genotype::NVARS;j++)
+				//	cout<<population[i].gene[j]<<endl;
+				test_func(population[i].gene,di,Genotype::NVARS,1,f);
+				population[i].fitness = di[0];
+				//cout<<population[i].fitness<<endl;
+			}		
+			keepTheBest();
+			feNumber = 0;
+			while(feNumber < funcEvaluate){
+				cout<<feNumber<<endl;
+				mutate_rand_1();
+				//for(int j = 0;j < Genotype::NVARS;j++)
+				//	cout<<"MID "<<MidPop[2].gene[j]<<endl;
+				cross();
+				for(int i = 1;i < POPSIZE;i++){
+					test_func(population[i].gene,di,Genotype::NVARS,1,f);
+					population[i].fitness = di[0];
+					test_func(MidPop[i].gene,di,Genotype::NVARS,1,f);
+					MidPop[i].fitness = di[0];
+					feNumber+=2;
+				}			
+				select();
+				keepTheBest();
+			}
+		
+			char filename[100];
+			sprintf(filename,"/home/ryan/testdata/outputc%dthe%dtimes.txt",f,t);
+			ofstream output(filename);
+			output<<"best: "<<bestA.fitness<<endl;
+			for(int j = 0;j < Genotype::NVARS;j++)
+				output<<bestA.gene[j]<<endl;
+			output.close();
+		}
+	}
 }
