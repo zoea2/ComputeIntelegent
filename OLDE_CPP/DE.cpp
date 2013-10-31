@@ -153,6 +153,29 @@ void cross(){
 		}
 	}
 }
+void creatOA(){
+	int u = (int)(log(row) / log (2));
+	for(int i = 1;i <= row;i++){
+		for(int k - 1;k <= u;k++){
+			int j = (int)pow(2,k-1);
+			oArray[i][j] = (int)(floor((i-1) / pow(2,u-k))) % 2;
+		}
+	}
+	for(int i = 1; i<= row;i++){
+		for(int k = 2;k <= u;k++){
+			int j = (int)(pow(2,k-1));
+			for(int s = 1;s <= j-1;s++){
+				oArray[i][j+s] = (oArray[i][s] + oArray[i][j]) % 2;
+			}
+		}
+	}
+	for(int i = 1;i <= row;i++){
+		for(int j = 1;j <= col;j++){
+			cout<<oArray[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+}
 int main(){
 	srand(time(0));
 	cout <<Genotype::NVARS<<endl;
