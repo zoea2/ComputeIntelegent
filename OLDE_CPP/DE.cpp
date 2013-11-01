@@ -8,6 +8,8 @@
 #include <cstdio>
 #include <fstream>
 using namespace std;
+bool isEnd;
+double globalbest[29];
 const int POPSIZE = 50;
 const int funcEvaluate = 300000;
 const int row = (int)(pow(2.0,ceil(log(Genotype::NVARS) / log(2))));
@@ -19,12 +21,29 @@ double Rosenbrock[Genotype::NVARS+1];
 double Rastrigin[Genotype::NVARS+1];
 int feNumber;
 int f;
+ofstream output;
 Genotype best;
 Genotype bestA;
 Genotype population[POPSIZE+1];
 Genotype MidPop[POPSIZE+1];
 double ranval(){
-	return rand() * 1.0 / RAND_MAX; 
+	return rand() % RAND_MAX * 1.0 / RAND_MAX; 
+}
+void printResult(){
+	if(feNumber == 0.01 * funcEvaluate || feNumber == 0.1 * funcEvaluate 
+		|| feNumber == 0.2 * funcEvaluate || feNumber == 0.3 * funcEvaluate
+		|| feNumber == 0.4 * funcEvaluate || feNumber == 0.5 * funcEvaluate
+		|| feNumber == 0.6 * funcEvaluate || feNumber == 0.7 * funcEvaluate
+		|| feNumber == 0.8 * funcEvaluate || feNumber == 0.9 * funcEvaluate
+		|| feNumber == funcEvaluate){
+			output<<"FES = "<<feNumber<<endl;
+			output<<"best :"<<bestA.fitness<<"  error value :"
+				<< bestA.fitness - globalbest[f]<<endl;
+			if(feNumber == funcEvaluate || bestA.fitness - globalbest[f] < 
+				0.00000001){
+					isEnd = true;
+			}
+	}		
 }
 void init(){
 	double lbound = -100;
@@ -137,6 +156,92 @@ void mutate_rand_1(){
 		}
 	}
 }
+void orthMutate_best_1(){
+	double *ans;
+	ans = new double[2];
+	for(int p = 1;p <= POPSIZE;p++){
+		int ran1 = (int)floor(POPSIZE * ranval() + 1);
+		while(ran1 == p)
+			ran1 = (int)floor(POPSIZE * ranval() + 1);
+		Genotype temp1(population[ran1]);
+		int ran2 = (int)floor(POPSIZE * ranval() + 1);
+		while (ran2 == ran1 || ran2 == p)
+			ran2 = (int)floor(POPSIZE * ranval() + 1);
+		Genotype temp2(population[ran2]);
+		int ran3 = (int)floor(POPSIZE * ranval() + 1);
+		while(ran3 == ran1 || ran3 == ran2 || ran3 == p)
+			ran3 = (int)floor(POPSIZE * ranval() + 1);
+		Genotype temp[row + 2];
+		for(int i = 1;i <= row;i++){
+			for(int j = 1;j <= Genotype::NVARS;j++){
+				if(oArray[i][j] == 1)
+					temp[i].gene[j-1] = population[p].gene[j-1];
+				else
+					temp[i].gene[j-1] = population[p].gene[j-1];
+			}
+			test_func(temp[i].gene,ans,Genotype::NVARS,1,f);
+			temp[i].fitness = ans[0];
+			feNumber++;
+			printResult();
+		}
+		double tempfit[Genotype::NVARS+1][Genotype::LEVEL+1];
+		Genotype ctemp;
+		for(int i = 1;i <= Genotype::NVARS;i++){
+			double min = 1;
+			int index = -1;
+			for(int j = 0;j < Genotype::LEVEL;j++){
+				tempfit[i][j] = 0;
+				int count = 0;
+				for(int k = 1;k <= row;k++){
+					if(oArray[k][i] == j){
+						tempfit[i][j] += temp[k].fitness;
+						count++;
+					}
+				}
+				tempfit[i][j] /= count;
+				if(index == -1){
+					min = tempfit[i][j];
+					index = j;
+				}
+				else if(min > tempfit[i][j]){
+					min = tempfit[i][j];
+					index = j;
+				}
+			}
+			if (index == 1)
+				ctemp.gene[i-1] = population[ran3].gene[i-1];
+			else
+				ctemp.gene[i-1] = best.gene[i-1];
+		}
+		test_func(ctemp.gene,ans,Genotype::NVARS,1,f);
+		ctemp.fitness = ans[0];
+		feNumber++;
+		printResult();
+		if(best.fitness > ctemp.fitness){
+			for(int j = 0;j < Genotype::NVARS;j++){
+				MidPop[p].gene[j] = ctemp.gene[j] + Genotype::SCALE * 
+									(temp1.gene[j] - temp2.gene[j]);
+				if(MidPop[p].gene[j] < MidPop[p].lower[j]
+						|| MidPop[p].gene[j] > MidPop[p].upper[j]){
+					MidPop[p].gene[j] = ranval() * (MidPop[p].upper[j] - MidPop[p].lower[j])
+						+ MidPop[p].lower[j];
+				}
+			}
+		}
+		else{
+			for(int j = 0;j < Genotype::NVARS;j++){
+				MidPop[p].gene[j] = best.gene[j] + Genotype::SCALE * 
+									(temp1.gene[j] - temp2.gene[j]);
+				if(MidPop[p].gene[j] < MidPop[p].lower[j]
+						|| MidPop[p].gene[j] > MidPop[p].upper[j]){
+					MidPop[p].gene[j] = ranval() * (MidPop[p].upper[j] - MidPop[p].lower[j])
+						+ MidPop[p].lower[j];
+				}
+			}
+	
+		}
+	}
+}	
 void cross(){
 	for(int i = 1;i <= POPSIZE;i++){
 		int jrand = (int)((ranval() * Genotype::NVARS));
@@ -189,6 +294,7 @@ void orthCross(){
 			test_func(temp[i].gene,ans,Genotype::NVARS,1,f);
 			temp[i].fitness = ans[0];
 			feNumber++;
+			printResult();
 		}
 		double tempfit[Genotype::NVARS+1][Genotype::LEVEL+1];
 		Genotype ctemp;
@@ -219,6 +325,8 @@ void orthCross(){
 		}
 		test_func(ctemp.gene,ans,Genotype::NVARS,1,f);
 		ctemp.fitness = ans[0];
+		feNumber++;
+		printResult();
 		if(MidPop[p].fitness > ctemp.fitness)
 			memcpy(MidPop[p].gene,ctemp.gene,sizeof(ctemp.gene));
 	}
@@ -227,7 +335,6 @@ int main(){
 	srand(time(0));
 	creatOA();
 	cout <<Genotype::NVARS<<endl;
-	double globalbest[29];
 	for(int i = 1;i <= 28;i++){
 		globalbest[i] = -1400 + (i-1) * 100;
 		if(i == 15)
@@ -246,8 +353,8 @@ int main(){
 		//	system("pause");
 			char filename[100];
 			sprintf(filename,"/home/ryan/testdata/outputc%dthe%dtimes.txt",f,t);
-			ofstream output(filename);
-			bool isEnd = false;
+			output.open(filename);
+			isEnd = false;
 			feNumber = 0;
 			double *di = new double[2];
 			for(int i = 1;i <= POPSIZE;i++){
@@ -256,6 +363,7 @@ int main(){
 				test_func(population[i].gene,di,Genotype::NVARS,1,f);
 				population[i].fitness = di[0];
 				feNumber++;
+				printResult();
 				//cout<<population[i].fitness<<endl;
 			}		
 			keepTheBest();
@@ -272,22 +380,10 @@ int main(){
 					population[i].fitness = di[0];
 					test_func(MidPop[i].gene,di,Genotype::NVARS,1,f);
 					MidPop[i].fitness = di[0];
-					feNumber+=2;
-					if(feNumber == 0.01 * funcEvaluate || feNumber == 0.1 * funcEvaluate 
-							|| feNumber == 0.2 * funcEvaluate || feNumber == 0.3 * funcEvaluate
-							|| feNumber == 0.4 * funcEvaluate || feNumber == 0.5 * funcEvaluate
-							|| feNumber == 0.6 * funcEvaluate || feNumber == 0.7 * funcEvaluate
-							|| feNumber == 0.8 * funcEvaluate || feNumber == 0.9 * funcEvaluate
-							|| feNumber == funcEvaluate){
-						output<<"FES = "<<feNumber<<endl;
-						output<<"best :"<<bestA.fitness<<"  error value :"
-							<< bestA.fitness - globalbest[f]<<endl;
-						if(feNumber == funcEvaluate || bestA.fitness - globalbest[f] < 
-								0.00000001){
-							isEnd = true;
-							break;
-						}
-					}
+					feNumber++;
+					printResult();
+					feNumber++;	
+					printResult();
 				}			
 				select();
 				keepTheBest();
