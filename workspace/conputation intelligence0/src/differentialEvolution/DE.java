@@ -687,6 +687,9 @@ public class DE {
 		for(int i = 1;i <= 16;i++){
 			accept[i] = input0.nextDouble();
 		}
+		final double conFactorInit = 0;
+		final double conFactorMax = 1;
+		
 		input0.close();
 		CreateMatrix();	
 		createOA();
@@ -712,6 +715,7 @@ public class DE {
 			bestM[f][1] = 0;
 			for(int t = 0;t < 25;t++)
 			{
+				double conFct = conFactorInit;
 				if(f >= 11 && f <= 14)
 					CreateMatrix();
 				Genotype[] population = new Genotype[POPSIZE+1];
@@ -731,14 +735,24 @@ public class DE {
 			evaluate(population,POPSIZE,f);
 			keepTheBest(population);
 			feNumber = 0;
-			while(feNumber <= funcEvaluate){				
+			while(feNumber <= funcEvaluate){	
+				conFct += 900 * (conFactorMax - conFactorInit) / funcEvaluate;
 				System.out.println(feNumber);
 				//orthMutate_best_1(population,MidPop);
-				mutate(population,MidPop);
-				if(isOl)
-					orthCross(population,MidPop);
-				else
-					cross(population,MidPop);
+				
+				if(feNumber > 250000){
+					orthMutate_best_1(population,MidPop);
+					//System.out.println("omb");
+					//System.out.println(conFct);
+					//orthCross(population,MidPop);
+				}
+				else{
+					//System.out.println("mr");
+					//System.out.println(conFct);
+					mutate(population,MidPop);
+					//cross(population,MidPop);
+				}
+				cross(population,MidPop);
 				evaluate(population,POPSIZE,f);				
 				evaluate(MidPop,POPSIZE,f);
 				select(population,MidPop);

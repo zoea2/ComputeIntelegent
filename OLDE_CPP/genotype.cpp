@@ -19,9 +19,9 @@ public:
 		fitness = INF;
 	}
 	Genotype(Genotype &genotype){
-		memcpy((&this->gene),(&genotype.gene),sizeof(genotype.gene));	
-		memcpy((&this->upper),(&genotype.upper),sizeof(genotype.upper));
-		memcpy((&this->lower),(&genotype.lower),sizeof(genotype.lower));
+		memcpy(this->gene,genotype.gene,sizeof(genotype.gene));	
+		memcpy(this->upper,genotype.upper,sizeof(genotype.upper));
+		memcpy(this->lower,genotype.lower,sizeof(genotype.lower));
 		this->fitness = genotype.fitness;
 	}
 	~Genotype(){
