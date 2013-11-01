@@ -174,6 +174,55 @@ void creatOA(){
 		cout<<endl;
 	}
 }
+void orthCross(){
+	double *ans;
+	ans = new double[2];
+	for(int p = 1;p <= POPSIZE;p++){
+		Genotype temp[row + 2];
+		for(int i = 1;i <= row;i++){
+			for(int j = 1;j <= Genotype::NVARS;j++){
+				if(oArray[i][j] == 1)
+					temp[i].gene[j-1] = population[p].gene[j-1];
+				else
+					temp[i].gene[j-1] = MidPop[p].gene[j-1];
+			}
+			test_func(temp[i].gene,ans,Genotype::NVARS,1,f);
+			temp[i].fitness = ans[0];
+			feNumber++;
+		}
+		double tempfit[Genotype::NVARS+1][Genotype::LEVEL+1];
+		Genotype ctemp;
+		for(int i = 1;i <= Genotype::NVARS;i++){
+			double min = -1;
+			int index = -1;
+			for(int j = 0;j < Genotype::LEVEL;j++){
+				tempfit[i][j] = 0;
+				int count = 0;
+				for(int k = 1;k <= row;k++){
+					if(oArray[k][i] == j){
+						tempfit[i][j] += temp[k].fitness;
+						count++;
+					}
+				}
+				tempfit[i][j] /= count;
+				if(index == -1){
+					min = tempfit[i][j];
+					index = j;
+				}
+				else if(min > tempfit[i][j]){
+					min = tempfit[i][j];
+					index = j;
+				}
+			}
+			if(index == 1)
+				ctemp.gene[i-1] = population[p].gene[i-1];
+		}
+		test_func(ctemp.gene,ans,Genotype::NVARS,1,f);
+		ctemp.fitness = ans[0];
+		if(MidPop[p].fitness > ctemp.fitness)
+			memcpy(MidPop[p].gene,ctemp.gene,sizeof(ctemp.gene));
+	}
+}
 int main(){
 	srand(time(0));
 	creatOA();
