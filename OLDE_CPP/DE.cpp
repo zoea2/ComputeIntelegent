@@ -17,14 +17,12 @@ double MTurn[Genotype::NVARS+1][Genotype::NVARS+1];
 double MResult[Genotype::NVARS+1][Genotype::NVARS+1];
 double Rosenbrock[Genotype::NVARS+1];
 double Rastrigin[Genotype::NVARS+1];
-
 int feNumber;
 int f;
 Genotype best;
 Genotype bestA;
 Genotype population[POPSIZE+1];
 Genotype MidPop[POPSIZE+1];
-
 double ranval(){
 	return rand() * 1.0 / RAND_MAX; 
 }
@@ -232,7 +230,6 @@ int main(){
 							|| feNumber == 0.6 * funcEvaluate || feNumber == 0.7 * funcEvaluate
 							|| feNumber == 0.8 * funcEvaluate || feNumber == 0.9 * funcEvaluate
 							|| feNumber == funcEvaluate){
-
 						output<<"FES = "<<feNumber<<endl;
 						output<<"best :"<<bestA.fitness<<"  error value :"
 							<< bestA.fitness - globalbest[f]<<endl;
@@ -241,9 +238,7 @@ int main(){
 							isEnd = true;
 							break;
 						}
-
 					}
-
 				}			
 				select();
 				keepTheBest();

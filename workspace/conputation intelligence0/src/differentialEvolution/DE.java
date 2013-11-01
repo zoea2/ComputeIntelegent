@@ -681,6 +681,8 @@ public class DE {
 		Rastrigin = new double[Genotype.NVARS];		
 		double[][] bestM = new double[20][2];
 		double[] accept = new double[17];
+		int unUpdateNum = 0;
+		boolean isOl = false;
 		Scanner input0 = new Scanner(new File("/home/ryan/testdata/accept.txt"));
 		for(int i = 1;i <= 16;i++){
 			accept[i] = input0.nextDouble();
@@ -731,15 +733,24 @@ public class DE {
 			feNumber = 0;
 			while(feNumber <= funcEvaluate){				
 				System.out.println(feNumber);
-				orthMutate_best_1(population,MidPop);
-				//else
-				//mutate(population,MidPop);
-				orthCross(population,MidPop);
-				//cross(population,MidPop);
+				//orthMutate_best_1(population,MidPop);
+				mutate(population,MidPop);
+				if(isOl)
+					orthCross(population,MidPop);
+				else
+					cross(population,MidPop);
 				evaluate(population,POPSIZE,f);				
 				evaluate(MidPop,POPSIZE,f);
 				select(population,MidPop);
-				keepTheBest(population);
+				if(!keepTheBest(population)){
+					unUpdateNum++;
+					if(unUpdateNum == 5)
+						isOl = true;
+				}
+				else{
+					unUpdateNum = 0;
+					isOl = false;
+				}
 				
 			}
 			String filename = "/home/ryan/testdata/output" + f + ".txt";
