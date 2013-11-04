@@ -617,7 +617,7 @@ public class DE {
 				temp[i] = new Genotype();
 				for(int j = 1;j <= Genotype.NVARS;j++){
 					if(oArray[i][j] == 1)
-						temp[i].gene[j-1] = population[p].gene[j-1];
+						temp[i].gene[j-1] = p	opulation[p].gene[j-1];
 					else
 						temp[i].gene[j-1] = MidPop[p].gene[j-1];
 				}				

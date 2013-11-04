@@ -69,45 +69,6 @@ void init(){
 		}
 	}
 }
-/*
-double funcU(double x,int a,int k,int m){
-	if(x > a)
-		return (double)(k * pow(x-a,m));
-	else if(x <= a && x >= -a)
-		return 0;
-	else
-		return (double)(k * pow(-x-a,m));
-}
-void setME(double ME[][Genotype::NVARS+1]){
-	for(int i = 0;i < Genotype::NVARS;i++){
-		for(int j = 0;j < Genotype::NVARS; j++){
-			if (i == j)
-				ME[i][j] = 1;
-			else
-				ME[i][j] = 0;
-		}
-	}
-}
-void MulMatrix(){
-	double temp[Genotype::NVARS][Genotype::NVARS];
-	for(int i = 0;i < Genotype::NVARS;i++){
-		for(int j = 0;j < Genotype::NVARS;j++){
-			temp[i][j] = 0;
-			for(int k = 0;k < Genotype::NVARS;k++)
-				temp[i][j] += MResult[i][k] * MTurn[k][j];
-		}
-	}
-	memcpy(&MResult,&temp,sizeof(temp));
-}
-void MRot(int i,int j){
-	setME(MTurn);
-	double alpha = (ranval() - 0.5) * PI * 0.5; 
-	MTurn[i][i] = cos(alpha);
-	MTurn[j][j] = cos(alpha);
-	MTurn[i][j] = sin(alpha);
-	MTurn[j][i] = -sin(alpha);
-}
-*/
 void select(){
 	for(int i = 1;i <= POPSIZE;i++){
 		if(MidPop[i].fitness < population[i].fitness){
@@ -322,6 +283,8 @@ void orthCross(){
 			}
 			if(index == 1)
 				ctemp.gene[i-1] = population[p].gene[i-1];
+			else
+				ctemp.gene[i-1] = MidPop[p].gene[i-1];
 		}
 		test_func(ctemp.gene,ans,Genotype::NVARS,1,f);
 		ctemp.fitness = ans[0];
@@ -342,7 +305,13 @@ int main(){
 	}
 	double* x;
 	for(f = 1;f <= 28;f++){
+		char filename[100];
+		sprintf(filename,"/home/ryan/testdata/outputc%d.txt",f);
+		output.open(filename);
 		for(int t = 0;t < 51;t++){
+			//cout<<"fuck"<<endl;
+			output<<"times "<<t<<endl;
+			//cout<<"fuck again"<<endl;
 			bestA.fitness = INF;
 			init();
 		/*	for(int i = 1;i <= POPSIZE;i++){
@@ -351,19 +320,20 @@ int main(){
 				}
 			}*/
 		//	system("pause");
-			char filename[100];
-			sprintf(filename,"/home/ryan/testdata/outputc%dthe%dtimes.txt",f,t);
-			output.open(filename);
 			isEnd = false;
 			feNumber = 0;
 			double *di = new double[2];
 			for(int i = 1;i <= POPSIZE;i++){
 				//for(int j = 0;ij < Genotype::NVARS;j++)
 				//	cout<<population[i].gene[j]<<endl;
+				//cout<<"Fuck"<<endl;
 				test_func(population[i].gene,di,Genotype::NVARS,1,f);
+				//cout<<"fuck"<<endl;
 				population[i].fitness = di[0];
 				feNumber++;
+		//		cout<<"fuck"<<endl;
 				printResult();
+		//		cout<<"fuck"<<endl;
 				//cout<<population[i].fitness<<endl;
 			}		
 			keepTheBest();
@@ -374,8 +344,11 @@ int main(){
 				mutate_rand_1();
 				//for(int j = 0;j < Genotype::NVARS;j++)
 				//	cout<<"MID "<<MidPop[2].gene[j]<<endl;
-				cross();
+		//		cross();
+				orthCross();
 				for(int i = 1;i <= POPSIZE;i++){
+					if(isEnd)
+						break;
 					test_func(population[i].gene,di,Genotype::NVARS,1,f);
 					population[i].fitness = di[0];
 					test_func(MidPop[i].gene,di,Genotype::NVARS,1,f);
@@ -396,8 +369,8 @@ int main(){
 			output<<"best: "<<bestA.fitness<<endl;
 			for(int j = 0;j < Genotype::NVARS;j++)
 				output<<bestA.gene[j]<<endl;
-			output.close();
 		}
 		cout<<"function "<<f<<" done!"<<endl;
+		output.close();
 	}
 }
