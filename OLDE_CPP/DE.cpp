@@ -337,6 +337,8 @@ int main(){
 				//cout<<population[i].fitness<<endl;
 			}		
 			keepTheBest();
+			int count = 0;
+			bool isOr = false;
 			while(feNumber < funcEvaluate){
 				if(isEnd)
 					break;
@@ -344,8 +346,10 @@ int main(){
 				mutate_rand_1();
 				//for(int j = 0;j < Genotype::NVARS;j++)
 				//	cout<<"MID "<<MidPop[2].gene[j]<<endl;
-		//		cross();
-				orthCross();
+				if(!isOr)
+					cross();
+				else
+					orthCross();
 				for(int i = 1;i <= POPSIZE;i++){
 					if(isEnd)
 						break;
@@ -359,7 +363,15 @@ int main(){
 					printResult();
 				}			
 				select();
-				keepTheBest();
+				if(keepTheBest()){
+					count = 0;
+					isOr = false;
+				}
+				else{
+					count++;
+					if(count >= 5)
+						isOr = true;
+				}
 				if(bestA.fitness - globalbest[f] < 0.00000001)
 					break;
 			}
