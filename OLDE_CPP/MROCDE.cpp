@@ -324,7 +324,7 @@ int main(){
 	double* x;
 	for(f = 1;f <= 28;f++){
 		char filename[100];
-		sprintf(filename,"/home/ryan/testdata/MBC2013/outputc%d.txt",f);
+		sprintf(filename,"/home/ryan/testdata/data_Scale0.9/MROC2013WC%.1lf/outputc%d.txt",Genotype::PXOVER,f);
 		output.open(filename);
 		for(int t = 0;t < 51;t++){
 			//cout<<"fuck"<<endl;
@@ -360,31 +360,12 @@ int main(){
 			while(feNumber < funcEvaluate){
 				if(isEnd)
 					break;
-			//cout<<feNumber<<endl;
-			//
-			/*
-				if(!isOr){
-
-					mutate_best_1();
-					cross();
-				}
-				else{
-
-					orthMutate_best_1();
-					orthCross();
-				}
-			*/
-				//for(int j = 0;j < Genotype::NVARS;j++)
-				//	cout<<"MID "<<MidPop[2].gene[j]<<endl;
-	/*
 				mutate_rand_1();
 				if(!isOr)
 					cross();
 				else
 					orthCross();
-	*/			
-				mutate_best_1();
-				cross();
+		
 				for(int i = 1;i <= POPSIZE;i++){
 					if(isEnd)
 						break;

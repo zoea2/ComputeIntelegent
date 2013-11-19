@@ -324,7 +324,7 @@ int main(){
 	double* x;
 	for(f = 1;f <= 28;f++){
 		char filename[100];
-		sprintf(filename,"/home/ryan/testdata/MBC2013/outputc%d.txt",f);
+		sprintf(filename,"/home/ryan/testdata/data_Scale0.9/MRC2013%.1lf/outputc%d.txt",Genotype::PXOVER,f);
 		output.open(filename);
 		for(int t = 0;t < 51;t++){
 			//cout<<"fuck"<<endl;
@@ -383,7 +383,7 @@ int main(){
 				else
 					orthCross();
 	*/			
-				mutate_best_1();
+				mutate_rand_1();
 				cross();
 				for(int i = 1;i <= POPSIZE;i++){
 					if(isEnd)

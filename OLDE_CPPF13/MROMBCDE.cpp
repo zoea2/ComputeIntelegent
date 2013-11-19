@@ -21,6 +21,10 @@ double Rosenbrock[Genotype::NVARS+1];
 double Rastrigin[Genotype::NVARS+1];
 int feNumber;
 int f;
+double lbound;
+double ubound;
+
+ifstream datainput;
 ofstream output;
 Genotype best;
 Genotype bestA;
@@ -36,27 +40,14 @@ void printResult(){
 		|| feNumber == 0.6 * funcEvaluate || feNumber == 0.7 * funcEvaluate
 		|| feNumber == 0.8 * funcEvaluate || feNumber == 0.9 * funcEvaluate
 		|| feNumber == funcEvaluate){
-//			output<<"FES = "<<feNumber<<endl;
-//			output<<"best :"<<bestA.fitness<<"  error value :"
-//				<< bestA.fitness - globalbest[f]<<endl;
-			if(feNumber == funcEvaluate || bestA.fitness - globalbest[f] < 
+			if(feNumber == funcEvaluate || abs(bestA.fitness - globalbest[f]) < 
 				0.00000001){
 					isEnd = true;
 			}
 	}		
 }
 void init(){
-	double lbound = -100;
-	double ubound = 100;
-	//string filename = "/home/ryan/testdata/bound";
 	char temp[100];
-//	cout<<"ff "<<f<<endl;
-//	sprintf(temp,"/home/ryan/testdata/bound%d.txt",f);
-//	cout<<temp<<endl;
-//	ifstream input;
-//	input.open(temp);
-//	input>>lbound>>ubound;
-//	input.close();
 	for(int i = 0;i < Genotype::NVARS;i++){
 		for(int j = 1;j <= POPSIZE;j++){
 			population[j].fitness = 0;
@@ -313,46 +304,36 @@ void orthCross(){
 	}
 }
 int main(){
+	int MAXGEN = 3000;
 	srand(time(0));
 	creatOA();
+	datainput.open("inputdata.txt");
 	cout <<Genotype::NVARS<<endl;
-	for(int i = 1;i <= 28;i++){
-		globalbest[i] = -1400 + (i-1) * 100;
-		if(i >= 15)
-			globalbest[i] += 100;
+	for(int i = 1;i <= 13;i++){
+		if(i == 8)
+			globalbest[i] = -12569.5;
+		else
+			globalbest[i] = 0;
 	}
 	double* x;
-	for(f = 1;f <= 28;f++){
+	for(f = 1;f <= 13;f++){
 		char filename[100];
-		sprintf(filename,"/home/ryan/testdata/MBC2013/outputc%d.txt",f);
+	datainput>>lbound>>ubound;
+		sprintf(filename,"/home/ryan/testdataNew/data_Scale%.1lf/MROMBC2013WC%.1lf/outputc%d.txt",Genotype::SCALE,Genotype::PXOVER,f);
 		output.open(filename);
 		for(int t = 0;t < 51;t++){
-			//cout<<"fuck"<<endl;
+			double orthPro = 0;
 			output<<"times "<<t<<endl;
-			//cout<<"fuck again"<<endl;
 			bestA.fitness = INF;
 			init();
-		/*	for(int i = 1;i <= POPSIZE;i++){
-				for(int j = 0;j < Genotype::NVARS;j++){
-					cout<<population[i].gene[j]<<endl;
-				}
-			}*/
-		//	system("pause");
 			isEnd = false;
 			feNumber = 0;
 			double *di = new double[2];
 			for(int i = 1;i <= POPSIZE;i++){
-				//for(int j = 0;ij < Genotype::NVARS;j++)
-				//	cout<<population[i].gene[j]<<endl;
-				//cout<<"Fuck"<<endl;
 				test_func(population[i].gene,di,Genotype::NVARS,1,f);
-				//cout<<"fuck"<<endl;
 				population[i].fitness = di[0];
 				feNumber++;
-		//		cout<<"fuck"<<endl;
 				printResult();
-		//		cout<<"fuck"<<endl;
-				//cout<<population[i].fitness<<endl;
 			}		
 			keepTheBest();
 			int count = 0;
@@ -360,30 +341,11 @@ int main(){
 			while(feNumber < funcEvaluate){
 				if(isEnd)
 					break;
-			//cout<<feNumber<<endl;
-			//
-			/*
-				if(!isOr){
-
+				orthPro += (double)1.0 / 3000;
+				if(ranval() <  orthPro)
 					mutate_best_1();
-					cross();
-				}
-				else{
-
-					orthMutate_best_1();
-					orthCross();
-				}
-			*/
-				//for(int j = 0;j < Genotype::NVARS;j++)
-				//	cout<<"MID "<<MidPop[2].gene[j]<<endl;
-	/*
-				mutate_rand_1();
-				if(!isOr)
-					cross();
 				else
-					orthCross();
-	*/			
-				mutate_best_1();
+					mutate_rand_1();
 				cross();
 				for(int i = 1;i <= POPSIZE;i++){
 					if(isEnd)
@@ -410,7 +372,7 @@ int main(){
 						isOr = true;
 				}
 			
-				if(bestA.fitness - globalbest[f] < 0.00000001)
+				if(abs(bestA.fitness - globalbest[f]) < 0.00000001)
 					break;
 			}
 			cout<<"function "<<f<<" times "<<t<<" done!"<<endl;
@@ -424,7 +386,7 @@ int main(){
 		output.close();
 
 
-
 	}
+		datainput.close();
 }
 

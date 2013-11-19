@@ -324,7 +324,7 @@ int main(){
 	double* x;
 	for(f = 1;f <= 28;f++){
 		char filename[100];
-		sprintf(filename,"/home/ryan/testdata/MBC2013/outputc%d.txt",f);
+		sprintf(filename,"/home/ryan/testdata/data_Scale0.9/MBOC2013WC%.1lf/outputc%d.txt",Genotype::PXOVER,f);
 		output.open(filename);
 		for(int t = 0;t < 51;t++){
 			//cout<<"fuck"<<endl;
@@ -342,17 +342,10 @@ int main(){
 			feNumber = 0;
 			double *di = new double[2];
 			for(int i = 1;i <= POPSIZE;i++){
-				//for(int j = 0;ij < Genotype::NVARS;j++)
-				//	cout<<population[i].gene[j]<<endl;
-				//cout<<"Fuck"<<endl;
 				test_func(population[i].gene,di,Genotype::NVARS,1,f);
-				//cout<<"fuck"<<endl;
 				population[i].fitness = di[0];
 				feNumber++;
-		//		cout<<"fuck"<<endl;
 				printResult();
-		//		cout<<"fuck"<<endl;
-				//cout<<population[i].fitness<<endl;
 			}		
 			keepTheBest();
 			int count = 0;
@@ -360,8 +353,6 @@ int main(){
 			while(feNumber < funcEvaluate){
 				if(isEnd)
 					break;
-			//cout<<feNumber<<endl;
-			//
 			/*
 				if(!isOr){
 
@@ -374,17 +365,11 @@ int main(){
 					orthCross();
 				}
 			*/
-				//for(int j = 0;j < Genotype::NVARS;j++)
-				//	cout<<"MID "<<MidPop[2].gene[j]<<endl;
-	/*
-				mutate_rand_1();
+				mutate_best_1();
 				if(!isOr)
 					cross();
 				else
 					orthCross();
-	*/			
-				mutate_best_1();
-				cross();
 				for(int i = 1;i <= POPSIZE;i++){
 					if(isEnd)
 						break;

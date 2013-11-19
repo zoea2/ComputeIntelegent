@@ -5,8 +5,8 @@ using namespace std;
 class Genotype{
 public:
 	const static int NVARS = 30;
-	const static double PXOVER = 0.1;
-	const static double SCALE = 0.9;
+	const static double PXOVER = 0.5;
+	const static double SCALE = 0.5;
 	const static int LEVEL = 2;
 	double gene[NVARS];
 	double fitness;

@@ -8,7 +8,7 @@ void process(string dirname){
 	temp1.append("result.txt");
 	ofstream output(temp1.c_str());
 	output<<"max\tmin\tmean\tstarf"<<endl;
-	for(int i = 1;i <= 28;i++){
+	for(int i = 1;i <= 13;i++){
 		char filename[100];
 		string temp = dirname;
 		temp.append("outputc%d.txt");
@@ -56,6 +56,6 @@ void process(string dirname){
 	
 }
 int main(){
-	string dirname = "/home/ryan/testdata/data_Scale0.5/MBMRC2013WC0.5/";
+	string dirname = "/home/ryan/testdataNew/data_Scale0.5/OMBOCP2013WC0.5/";
 	process(dirname);
 }
