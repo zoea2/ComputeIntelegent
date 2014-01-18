@@ -169,7 +169,7 @@ void test_func(double *x, double *f, int nx, int mx,int func_num)
 						f[i] += pow(x[j]-1,2) * (1 + pow(sin(3 * PI * x[j+1]),2));
 					}
 					else
-						f[i] += (x[j]-1) * (1 + pow(sin(2 * PI * x[j]),2));
+						f[i] += pow((x[j]-1),2) * (1 + pow(sin(2 * PI * x[j]),2));
 					tempu += u(x[j],5,100,4);
 				}
 				f[i] *= 0.1;

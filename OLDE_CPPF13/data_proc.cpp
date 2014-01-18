@@ -56,6 +56,14 @@ void process(string dirname){
 	
 }
 int main(){
-	string dirname = "/home/ryan/testdataNew/data_Scale0.5/OMBOCP2013WC0.5/";
-	process(dirname);
+	string path = "/home/ryan/testdataNew/data_Scale0.9/";
+	string dirname;
+	ifstream input("ls.txt");
+	while(input>>dirname){
+		dirname = path+dirname;
+		dirname +="/";
+//		cout<<dirname<<endl;
+		process(dirname);
+	}
+	//process(dirname);
 }

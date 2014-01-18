@@ -312,8 +312,7 @@ void orthCross(){
 			memcpy(MidPop[p].gene,ctemp.gene,sizeof(ctemp.gene));
 	}
 }
-int main(){
-	srand(time(0));
+int main(){ srand(time(0));
 	creatOA();
 	cout <<Genotype::NVARS<<endl;
 	for(int i = 1;i <= 28;i++){

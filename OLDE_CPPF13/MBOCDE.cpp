@@ -61,6 +61,7 @@ void init(){
 	for(int i = 0;i < Genotype::NVARS;i++){
 		for(int j = 1;j <= POPSIZE;j++){
 			population[j].fitness = 0;
+			MidPop[j].fitness = INF;
 			population[j].lower[i] = lbound;
 			population[j].upper[i] = ubound;
 			MidPop[j].lower[i] = lbound;
@@ -230,6 +231,10 @@ void cross(){
 				MidPop[i].gene[j] = population[i].gene[j];
 			}
 		}
+		double *ans = new double[2];
+		test_func(MidPop[i].gene,ans,Genotype::NVARS,1,f);
+		MidPop[i].fitness = ans[0];
+		feNumber++;
 	}
 }
 void creatOA(){
@@ -309,8 +314,8 @@ void orthCross(){
 		ctemp.fitness = ans[0];
 		feNumber++;
 		printResult();
-		if(MidPop[p].fitness > ctemp.fitness)
-			memcpy(MidPop[p].gene,ctemp.gene,sizeof(ctemp.gene));
+		memcpy(MidPop[p].gene,ctemp.gene,sizeof(ctemp.gene));
+		MidPop[p].fitness = ctemp.fitness;
 	}
 }
 int main(){
@@ -357,37 +362,12 @@ int main(){
 			while(feNumber < funcEvaluate){
 				if(isEnd)
 					break;
-			/*
-				if(!isOr){
-
-					mutate_best_1();
-					cross();
-				}
-				else{
-
-					orthMutate_best_1();
-					orthCross();
-				}
-			*/
 				mutate_best_1();
 				if(!isOr)
 					cross();
 				else
 					orthCross();
-				for(int i = 1;i <= POPSIZE;i++){
-					if(isEnd)
-						break;
-					test_func(population[i].gene,di,Genotype::NVARS,1,f);
-					population[i].fitness = di[0];
-					test_func(MidPop[i].gene,di,Genotype::NVARS,1,f);
-					MidPop[i].fitness = di[0];
-					feNumber++;
-					printResult();
-					feNumber++;	
-					printResult();
-				}			
 				select();
-			//	keepTheBest();
 				
 				if(keepTheBest()){
 					count = 0;
@@ -408,6 +388,12 @@ int main(){
 			output<<"best: "<<bestA.fitness<<endl;
 			for(int j = 0;j < Genotype::NVARS;j++)
 				output<<bestA.gene[j]<<endl;
+
+			for(int i = 1;i <= POPSIZE;i++){
+				output<<"per "<<i<<endl;
+				for(int j = 0;j < Genotype::NVARS;j++)
+					output<<population[i].gene[j]<<endl;
+			}
 		}
 		cout<<"function "<<f<<" done!"<<endl;
 		output.close();

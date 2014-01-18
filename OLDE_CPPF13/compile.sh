@@ -9,3 +9,7 @@ g++ OMBOCDE.cpp -o OMBOCDE
 g++ MRMBCDE.cpp -o MRMBCDE
 g++ MBMRCDE.cpp -o MBMRCDE
 g++ MROMBCDE.cpp -o MROMBCDE
+g++ MBOCDEP.cpp -o MBOCDEP
+g++ MROCDEP.cpp -o MROCDEP
+g++ OMBCDEP.cpp -o OMBCDEP
+g++ OMBOCDEP.cpp -o OMBCDEP

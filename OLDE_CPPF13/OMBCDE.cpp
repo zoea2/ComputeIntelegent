@@ -68,6 +68,7 @@ void init(){
 			MidPop[j].upper[i] = ubound;
 			population[j].gene[i] = ranval() * (population[j].upper[i] - population[j].lower[i])
 				+ population[j].lower[i];
+			MidPop[j].fitness = INF;
 		}
 	}
 }
@@ -206,6 +207,9 @@ void orthMutate_best_1(){
 						|| MidPop[p].gene[j] > MidPop[p].upper[j]){
 					MidPop[p].gene[j] = ranval() * (MidPop[p].upper[j] - MidPop[p].lower[j])
 						+ MidPop[p].lower[j];
+				test_func(MidPop[p].gene,ans,Genotype::NVARS,1,f);
+				feNumber++;
+				printResult();
 				}
 			}
 		}
@@ -310,8 +314,10 @@ void orthCross(){
 		ctemp.fitness = ans[0];
 		feNumber++;
 		printResult();
-		if(MidPop[p].fitness > ctemp.fitness)
+		if(MidPop[p].fitness > ctemp.fitness){
 			memcpy(MidPop[p].gene,ctemp.gene,sizeof(ctemp.gene));
+			MidPop[p].fitness = ctemp.fitness;
+		}
 	}
 }
 int main(){
@@ -371,18 +377,7 @@ int main(){
 				}
 				
 				cross();
-				for(int i = 1;i <= POPSIZE;i++){
-					if(isEnd)
-						break;
-					test_func(population[i].gene,di,Genotype::NVARS,1,f);
-					population[i].fitness = di[0];
-					test_func(MidPop[i].gene,di,Genotype::NVARS,1,f);
-					MidPop[i].fitness = di[0];
-					feNumber++;
-					printResult();
-					feNumber++;	
-					printResult();
-				}			
+		
 				select();
 			//	keepTheBest();
 				

@@ -346,12 +346,12 @@ int main(){
 				for(int i = 1;i <= POPSIZE;i++){
 					if(isEnd)
 						break;
-					test_func(population[i].gene,di,Genotype::NVARS,1,f);
-					population[i].fitness = di[0];
+					//test_func(population[i].gene,di,Genotype::NVARS,1,f);
+					//population[i].fitness = di[0];
 					test_func(MidPop[i].gene,di,Genotype::NVARS,1,f);
 					MidPop[i].fitness = di[0];
-					feNumber++;
-					printResult();
+					//feNumber++;
+					//printResult();
 					feNumber++;	
 					printResult();
 				}			

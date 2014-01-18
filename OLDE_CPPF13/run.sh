@@ -68,3 +68,8 @@ then
 else
 	echo MROMBCDE failed
 fi
+./MBMRCDE
+./MBOCDEP
+./MROCDEP
+./OMBCDEP
+./OMBOCDEP
